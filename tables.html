@@ -7,7 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style">
 
 </head>
 <body>
@@ -21,7 +21,7 @@
       <br>
 
       <div class="text-center">
-        <a href="reservation.html"><button type="button" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-credit-card"></span> Make Reservation</button></a>
+        <a href="/reservation"><button type="button" class="btn btn-lg btn-danger"><span class="glyphicon glyphicon-credit-card"></span> Make Reservation</button></a>
         <a href="/"><button type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-home"></span></button></a>
       </div>
     </div>
@@ -33,7 +33,15 @@
           <div class="panel-heading">
             <h4 class="panel-title">Current Reservations</h4>
           </div>
-          <div class="panel-body" id="tableSection">
+          <div class="panel-body">
+            <table class="table" id = "tableSection">
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Cancel</th>
+              </tr>
+            </table>
           </div>
         </div>
 
@@ -41,20 +49,87 @@
           <div class="panel-heading">
             <h4 class="panel-title">Waiting List</h4>
           </div>
-          <div class="panel-body" id="waitlistSection">
+          <div class="panel-body">
+            <table class="table" id = "waitlistSection">
+              <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
     </div>
 
-
       <footer class="footer">
         <div class="container">
           <p>Control Panel</p>
-          <p><a href="#" id="clear">Clear Table</a> | <a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API Wait List</a></p>
+          <p><a href="#" id="close">Close Restaurant</a> | <a href="/api/table">API Table Link</a> | <a href="/api/waitlist">API Wait List</a></p>
         </div>
       </footer>
 
   </div>
+  <div id="counter" class="counter"></div>
+  <script type="text/javascript">
+    $("#close").click(function(){
+      $.post("/api/close")
+      .done(function(data) {
+        console.log(data);
+        alert("Cleared Waitlist and Tables.  Restaurant closed.");
+        $("#tableSection").empty();
+        $("#waitListSection").empty();
+      });    
+    })
+
+  var updateTable = function() {
+
+    $("#tableSection").empty();
+    $("#waitlistSection").empty();
+
+    $.get("/api/table", function(data) {
+      for(var i = 0; i < data.length; i++){
+        var tableRow = $("<tr>");
+        tableRow.append("<td>" + data[i].name + "</td>");
+        tableRow.append("<td>" + data[i].email + "</td>");
+        tableRow.append("<td>" + data[i].phone + "</td>");
+        tableRow.append("<td><button class= 'cancel' id='" + i + "'>X</td>");
+        $("#tableSection").append(tableRow);
+      }
+    });
+
+    $.get("/api/waitlist", function(data) {
+      for(var i = 0; i < data.length; i++){
+        var tableRow = $("<tr>");
+        tableRow.append("<td>" + data[i].name + "</td>");
+        tableRow.append("<td>" + data[i].email + "</td>");
+        tableRow.append("<td>" + data[i].phone + "</td>");
+        $("#waitlistSection").append(tableRow);
+      }
+    });
+  }
+
+  updateTable();
+
+  $("#tableSection").on("click", ".cancel", function() {
+    var tableIndex = $(this).attr("id");
+    var clearObj = {"tableIndex" : tableIndex};
+    $.post("/api/clear", clearObj)
+    .done(function(data) {
+      console.log(data);
+      alert("Table Done Eating!");
+      updateTable();
+    });
+  });
+
+  $.get("/api/tablepageCounter")
+    .done(function(data) {
+    $("#counter").html("Page Count: " + data);
+  })
+
+
+
+  </script>
+
 </body>
 </html>

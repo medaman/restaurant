@@ -1,0 +1,9 @@
+.counter {
+	position: fixed;
+	right: 10px;
+	bottom: 10px;
+	border:2px solid black;
+	background-color: salmon;
+	padding: 5px;
+	color: lime;
+}

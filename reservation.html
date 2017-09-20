@@ -7,7 +7,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/style">
 
 </head>
 <body>
@@ -20,7 +20,7 @@
       <br>
 
       <div class="text-center">
-        <a href="tables.html"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-list-alt"></span> View Tables</button></a>
+        <a href="/tables"><button type="button" class="btn btn-lg btn-primary"><span class="glyphicon glyphicon-list-alt"></span> View Tables</button></a>
         <a href="/"><button type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-home"></span></button></a>
       </div>
     </div>
@@ -38,42 +38,64 @@
             <form role="form">
 
               <div class="form-group">
-                <label for="">Name</label>
-                <input type="text" class="form-control" id="reserve_name">
+                <label>Name</label>
+                <input type="text" class="form-control" id="name">
               </div>
 
               <div class="form-group">
-                <label for="">Phone Number</label>
-                <input type="text" class="form-control" id="reserve_phone">
+                <label>Phone Number</label>
+                <input type="text" class="form-control" id="phone">
               </div>
 
               <div class="form-group">
-                <label for="">Email</label>
-                <input type="text" class="form-control" id="reserve_email">
+                <label>Email</label>
+                <input type="text" class="form-control" id="email">
               </div>
-
+<!--
               <div class="form-group">
                 <label for="">Unique ID</label>
                 <input type="text" class="form-control" id="reserve_uniqueID">
               </div>
-
-              <button type="submit" class="btn btn-primary submit">Submit</button>
+-->
+              <button type="submit" class="btn btn-primary submit" id="add-btn">Submit</button>
             </form>
 
           </div>
         </div>
-
       </div>
     </div>
 
 
       <footer class="footer">
         <div class="container">
-          <p><a href="/api/tables">API Table Link</a> | <a href="/api/waitlist">API Wait List</a> </p>
+          <p><a href="/api/table">API Table Link</a> | <a href="/api/waitlist">API Wait List</a> </p>
         </div>
       </footer>
-
   </div>
-</body>
+
+  <div id="counter" class="counter"></div>
+
+  
+  <script type="text/javascript">
+    $("#add-btn").on("click", function(event) {
+      event.preventDefault();
+      var newRes = {
+        name: $("#name").val().trim(),
+        phone: $("#phone").val().trim(),
+        email: $("#email").val().trim(),
+      };
+
+      $.post("/api/new", newRes)
+      .done(function(data) {
+        console.log(data);
+      });
+    });
+
+    $.get("/api/reservationpageCounter")
+    .done(function(data) {
+      $("#counter").html("Page Count: " + data);
+    })
+
+  </script>
 </body>
 </html>
