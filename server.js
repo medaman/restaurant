@@ -33,8 +33,31 @@ app.get("/reservation", function(req, res) {
 });
 
 //APIs
+app.post("/api/new", function(req, res) {
+  var newTable = req.body;
+  
+});
 
+//Functions
+var pushToArray = function(tableObj){
+	if(tableArray.length < 6){
+		tableArray.push(tableObj);
+	}else{
+		waitlistArray.push(tableObj);
+	}
+};
 
+var clearRestaurant = function(){
+	tableArray = [];
+	waitlistArray = [];
+};
+
+var clearTable = function(tableIndex){
+	tableArray.splice(tableIndex, 1);
+	if(waitlistArray.length > 0){
+		tableArray.push(waitlistArray[0]);		
+	}
+};
 
 //Set up Listening
 app.listen(PORT, function(){
